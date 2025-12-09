@@ -1,0 +1,24 @@
+﻿---
+- name: Install and configure server and clients
+  hosts: all
+  become: yes
+  tasks:
+    - name: Include trusted server tasks
+      include_role:
+        name: trusted
+      when: "'trusted' in group_names"
+
+    - name: Include server tasks
+      include_role:
+        name: server
+      when: "'server' in group_names"
+
+    - name: Include agent tasks
+      include_role:
+        name: agent
+      when: "'agent' in group_names"
+
+    - name: Include malicious server tasks
+      include_role:
+        name: malicious
+      when: "'malicious' in group_names"

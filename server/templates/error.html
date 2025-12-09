@@ -1,0 +1,11 @@
+{% extends "utils/base.html" %}
+
+{% block title %}Error {{ code }}{% endblock %}
+
+{% block content %}
+<div style="text-align: center; margin-top: 50px;">
+    <h1 style="font-size: 100px; color: red;">⚠️</h1>
+    <h2>{{ code }} - {{ title }}</h2>
+    <p style="font-size: 20px;">{{ description }}</p>
+</div>
+{% endblock %}

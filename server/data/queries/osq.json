@@ -1,0 +1,23 @@
+﻿{
+    "list_running_processes":{
+        "query":"SELECT pid, name, path, cmdline FROM processes;",
+        "type":"process",
+        "threshold":45,
+        "relationship":"running",
+        "enabled": false
+    },
+    "list_network_connections": {
+        "query": "SELECT (CASE family WHEN 2 THEN 'IP4' WHEN 10 THEN 'IP6' ELSE family END) AS family, (CASE protocol WHEN 6 THEN 'TCP' WHEN 17 THEN 'UDP' ELSE protocol END) AS protocol, local_address, local_port, remote_address, remote_port FROM process_open_sockets WHERE family IN (2,10) AND protocol IN (6,17) AND local_address LIKE '10.%' AND remote_address LIKE '10.%';",
+        "type": "network-traffic",
+        "threshold":0,
+        "relationship": "connected",
+        "enabled": false
+    },
+    "list_runnable_temporary_files": {
+        "query": "SELECT f.path, f.size, f.atime, f.ctime, f.mtime, h.md5, h.sha1, h.sha256 FROM file f JOIN hash h ON f.path = h.path WHERE (f.mode & 73) != 0 AND f.directory IN ('/tmp');",
+        "type": "file",
+        "threshold":70,
+        "relationship": "owns",
+        "enabled": false
+    }
+}

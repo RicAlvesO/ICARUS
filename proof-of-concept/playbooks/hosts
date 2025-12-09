@@ -1,0 +1,12 @@
+[server]
+server1 ansible_host=10.10.0.2 ansible_user=root
+
+[agent]
+client1 ansible_host=10.10.0.3 ansible_user=root
+client2 ansible_host=10.10.0.4 ansible_user=root
+
+[trusted]
+trusted1 ansible_host=10.20.0.2 ansible_user=root
+
+[attacker]
+attacker1 ansible_host=10.20.0.3 ansible_user=root

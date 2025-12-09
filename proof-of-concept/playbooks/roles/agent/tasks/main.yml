@@ -1,0 +1,78 @@
+﻿---
+- name: Create keyrings directory
+  file:
+    path: /etc/apt/keyrings
+    state: directory
+
+- name: Add osquery GPG key
+  get_url:
+    url: https://pkg.osquery.io/deb/pubkey.gpg
+    dest: /etc/apt/keyrings/osquery.asc
+    mode: '0644'  
+
+- name: Add osquery repository
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/osquery.asc] https://pkg.osquery.io/deb deb main"
+    state: present
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install osquery
+  apt:
+    name: osquery
+    state: present  
+
+- name: Copy Agent folder to the clients
+  copy:
+    src: ../../../../../agent/  
+    dest: /opt/mon-agent/
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy test data
+  copy:
+    src: ../../../../data/agent/  
+    dest: /opt/mon-agent/
+    owner: root
+    group: root
+    mode: '0644'
+
+
+- name: Create log folder
+  file:
+    path: /var/log/mon-agent
+    state: directory
+    mode: '0644'
+
+- name: Give exec permissions
+  file:
+    path: /opt/mon-agent/mon-agent
+    mode: '0755'  
+
+- name: Create symbolic link for osquery packs folder
+  file:
+    src: /opt/mon-agent/data/osquery
+    dest: /etc/osquery
+    state: link
+    force: yes 
+
+- name: Ensure osquery service is running
+  service:
+    name: osqueryd 
+    state: restarted  
+
+- name: Install Python dependencies
+  shell: /usr/bin/pip3 install -r /opt/mon-agent/requirements
+
+- name: Start the agent
+  shell: |
+    cd /opt/mon-agent
+    ./mon-agent >> /var/log/mon-agent/shell.log 2>&1 &
+  async: 1
+  poll: 0
+
+- import_tasks: ftp.yml
+- import_tasks: multillidae.yml

@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  server1: # Main Server
+    build:
+      context: ./dockerfiles/internal
+      dockerfile: Dockerfile.server
+      args:
+        PUBLIC_KEY: ${PUBLIC_KEY} 
+    networks:
+      internal-network:
+        ipv4_address: 10.10.0.2 
+      external-network:
+        ipv4_address: 10.20.1.2  
+
+  client1: # Agent 1
+    build:
+      context: ./dockerfiles/internal
+      dockerfile: Dockerfile.client
+      args:
+        PUBLIC_KEY: ${PUBLIC_KEY} 
+    networks:
+      internal-network:
+        ipv4_address: 10.10.0.3  
+      external-network:
+        ipv4_address: 10.20.1.3  
+
+  client2: # Agent 2
+    build:
+      context: ./dockerfiles/internal
+      dockerfile: Dockerfile.client
+      args:
+        PUBLIC_KEY: ${PUBLIC_KEY} 
+    networks:
+      internal-network:
+        ipv4_address: 10.10.0.4
+      external-network:
+        ipv4_address: 10.20.1.4  
+
+  trusted1: # Trusted External CTI Provider
+    build:
+      context: ./dockerfiles/external
+      dockerfile: Dockerfile.trusted
+      args:
+        PUBLIC_KEY: ${PUBLIC_KEY} 
+    networks:
+      external-network:
+        ipv4_address: 10.20.0.2
+
+  attacker1: # Malicious External CTI Provider
+    build:
+      context: ./dockerfiles/external
+      dockerfile: Dockerfile.malicious
+      args:
+        PUBLIC_KEY: ${PUBLIC_KEY} 
+    networks:
+      external-network:
+        ipv4_address: 10.20.0.3  
+
+networks:
+  internal-network: # Simulated Internal Network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.0.0/24  
+  external-network: # Simulated External Network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.20.0.0/23

@@ -1,0 +1,25 @@
+﻿---
+# Install and configure anonymous FTP
+- name: Install vsftpd
+  apt:
+    name: vsftpd
+    state: present
+    update_cache: yes
+
+- name: Enable anonymous FTP
+  lineinfile:
+    path: /etc/vsftpd.conf
+    regexp: '^#?anonymous_enable='
+    line: 'anonymous_enable=YES'
+
+- name: Enable local user login in FTP
+  lineinfile:
+    path: /etc/vsftpd.conf
+    regexp: '^#?local_enable='
+    line: 'local_enable=YES'
+
+- name: Restart FTP service
+  service:
+    name: vsftpd
+    state: restarted
+    enabled: yes

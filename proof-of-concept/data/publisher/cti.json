@@ -1,0 +1,121 @@
+[
+    {
+        "type": "bundle",
+        "id": "bundle--5df58cd4-91c4-4afd-87bc-a1cdeabd4067",
+        "objects": [
+            {
+                "type": "threat-actor",
+                "tlp": "amber",
+                "risk": 100,
+                "spec_version": "2.1",
+                "id": "threat-actor--5df58cd4-91c4-4afd-87bc-a1cdeabd4067",
+                "name": "attacker1"
+            }
+        ],
+        "relationships": []
+    },
+    {
+        "type": "bundle",
+        "id": "bundle--5df58cd4-91c4-4afd-87bc-a1cdeabd4067",
+        "objects": [
+            {
+                "type": "ipv4-addr",
+                "tlp": "amber",
+                "risk": 40,
+                "spec_version": "2.1",
+                "id": "ipv4-addr--6e35061d-babf-5e53-811d-d43601db4b1f",
+                "value": "10.20.0.3"
+            },
+            {
+                "type": "domain-name",
+                "tlp": "amber",
+                "risk": 30,
+                "spec_version": "2.1",
+                "id": "domain-name--b8f3c6e2-1f4e-5f4a-8e2e-3c3f3e3c3e3c",
+                "value": "malicious.attacker.com"
+            },
+            {
+                "type": "threat-actor",
+                "tlp": "amber",
+                "risk": 100,
+                "spec_version": "2.1",
+                "id": "threat-actor--5df58cd4-91c4-4afd-87bc-a1cdeabd4067",
+                "name": "attacker1"
+            }
+        ],
+        "relationships": [
+            {
+                "id": "relationship--1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p6",
+                "type": "relationship",
+                "tlp": "amber",
+                "risk": 30,
+                "relationship_type": "related_to",
+                "source_ref": "ipv4-addr--6e35061d-babf-5e53-811d-d43601db4b1f",
+                "target_ref": "threat-actor--5df58cd4-91c4-4afd-87bc-a1cdeabd4067"
+            },
+            {
+                "id": "relationship--1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p7",
+                "type": "relationship",
+                "tlp": "amber",
+                "risk": 30,
+                "relationship_type": "related_to",
+                "source_ref": "domain-name--b8f3c6e2-1f4e-5f4a-8e2e-3c3f3e3c3e3c",
+                "target_ref": "threat-actor--5df58cd4-91c4-4afd-87bc-a1cdeabd4067"
+            },
+            {
+                "id": "relationship--1a2b3c4d-5e6f-7g8h-9i0j-k1l2m3n4o5p8",
+                "type": "relationship",
+                "tlp": "amber",
+                "risk": 30,
+                "relationship_type": "resolved_by",
+                "source_ref": "domain-name--b8f3c6e2-1f4e-5f4a-8e2e-3c3f3e3c3e3c",
+                "target_ref": "ipv4-addr--6e35061d-babf-5e53-811d-d43601db4b1f"
+            }
+        ]
+    },
+    {
+        "type": "bundle",
+        "id": "bundle--adf58cd4-91c4-4afd-87bc-a1cdeabd4067",
+        "objects": [
+            {
+                "command_line": "curl -L -o /dev/null https://ash-speed.hetzner.com/1GB.bin",
+                "cwd": "/usr/bin/curl",
+                "id": "process--1e42945a-6715-4802-aa85-6b0039995b7c",
+                "risk": 50,
+                "tlp": "white",
+                "type": "process"
+            }
+        ],
+        "relationships": []
+    },
+    {
+        "type": "bundle",
+        "id": "bundle--adf58aa4-9111-4afd-87bc-a1cdeabd4067",
+        "objects": [
+            {
+                "atime": "2025-09-01T21:05:08Z",
+                "ctime": "2025-09-01T21:05:08Z",
+                "hashes": {
+                    "MD5": "37359da4f89a37226a5c476cf0604e1d",
+                    "SHA-1": "63a1448d97d2bfb83f022f5ae8c08345465bb435",
+                    "SHA-256": "d637b207d4acfab282c13eef83243e6123aac7ff5c8f0f0c7af2d3731b0ff09a"
+                },
+                "id": "file--b1bf4a69-712c-5b11-903e-c86924ae6688",
+                "mtime": "2025-09-01T21:05:08Z",
+                "name": "/tmp/evil_script.sh",
+                "risk": 100,
+                "size": 21,
+                "tlp": "amber",
+                "type": "file"
+            }
+        ],
+        "relationships": [],
+        "network_traffic": []
+    },
+    {
+        "type": "bundle",
+        "id": "bundle--11158aa4-91c4-4afd-87bc-a1cdeabd4067",
+        "objects": [],
+        "relationships": []
+    }
+]

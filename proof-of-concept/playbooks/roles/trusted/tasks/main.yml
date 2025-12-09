@@ -1,0 +1,37 @@
+﻿---
+- name: Copy Publisher folder 
+  copy:
+    src: ../../../../cti-publisher/
+    dest: /opt/cti-publisher/
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Copy Test data  
+  copy:
+    src: ../../../../data/publisher/
+    dest: /opt/cti-publisher/data/
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create log folder
+  file:
+    path: /var/log/cti-publisher
+    state: directory
+    mode: '0644'
+
+- name: Give exec permissions
+  file:
+    path: /opt/cti-publisher/cti-publisher
+    mode: '0755'
+
+- name: Install Python dependencies
+  shell: /usr/bin/pip3 install -r /opt/cti-publisher/requirements
+
+- name: Start the agent
+  shell: |
+    cd /opt/cti-publisher
+    ./cti-publisher 'data/cti.json' >> /var/log/cti-publisher/web-server.log 2>&1 &
+  async: 1
+  poll: 0

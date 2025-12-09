@@ -1,0 +1,111 @@
+{% extends "utils/base.html" %}
+
+{% block title %}CTI Alert System{% endblock %}
+
+{% block content %}
+<div class="container">
+  <h1 class="mb-4">CTI Alert System</h1>
+
+  <div class="row g-4">
+    <div class="col-md-12">
+      <a href="/alerts/type/active" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-exclamation-triangle fa-2x mb-2 text-danger"></i>
+            <h5 class="card-title">Active Alerts</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a href="/alerts/type/dismissed" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-exclamation-triangle fa-2x mb-2 text-warning"></i>
+            <h5 class="card-title">Dismissed Alerts</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col-md-6">
+      <a href="/alerts/type/resolved" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-exclamation-triangle fa-2x mb-2 text-success"></i>
+            <h5 class="card-title">Resolved Alerts</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Data Subroutes -->
+    <div class="col-md-4">
+      <a href="/data/observables" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-eye fa-2x mb-2 text-info"></i>
+            <h5 class="card-title">Observables</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="/data/relationships" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-project-diagram fa-2x mb-2 text-info"></i>
+            <h5 class="card-title">Relationships</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-4">
+      <a href="/data/traffic" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-network-wired fa-2x mb-2 text-info"></i>
+            <h5 class="card-title">Network Traffic</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Agents -->
+    <div class="col-md-6">
+      <a href="/agents" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-user-shield fa-2x mb-2 text-primary"></i>
+            <h5 class="card-title">Agents</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="col-md-6">
+      <a href="/collectors" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-magnet fa-2x mb-2 text-primary"></i>
+            <h5 class="card-title">Collectors</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- System Logs (full width) -->
+    <div class="col-12">
+      <a href="/system/logs" class="text-decoration-none">
+        <div class="card text-center shadow-sm h-100">
+          <div class="card-body">
+            <i class="fas fa-terminal fa-2x mb-2 text-secondary"></i>
+            <h5 class="card-title">System Logs</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}

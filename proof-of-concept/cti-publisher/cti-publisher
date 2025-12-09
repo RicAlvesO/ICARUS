@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+
+from src.publisher import Publisher
+
+import argparse
+
+# ------------------------------------------------------------------
+# Main Function
+# ------------------------------------------------------------------
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="CTI Publisher")
+    parser.add_argument("json_files", nargs="+", help="Paths to the JSON files containing arrays of objects")
+    parser.add_argument("--host", type=str, default="0.0.0.0", help="Host to run the server on")
+    parser.add_argument("--port", type=int, default=5000, help="Port to run the server on")
+
+    args = parser.parse_args()
+
+    server = Publisher(host=args.host, port=args.port)
+
+    i = 0
+    for json_file in args.json_files:
+        server.load_data(json_file, str(i))
+        i += 1
+
+    try:
+        server.run()
+    except KeyboardInterrupt:
+        server.stop()
+        sys.exit(0)

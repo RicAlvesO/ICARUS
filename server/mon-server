@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+
+from src.interface import Interface
+from src.server import Server
+
+import threading
+import argparse
+import json
+import sys
+
+# ------------------------------------------------------------------
+# Main Server
+# ------------------------------------------------------------------
+
+def start_server(config, host, interface, certfile, keyfile, logfile):
+    server = Server(config)
+    server.set_server_args(
+        host=host,
+        interface=interface,
+        cert=certfile,
+        key=keyfile
+    )
+    if logfile:
+        server.set_logger(logfile)
+    threading.Thread(target=server.start).start()
+    return server
+
+# ------------------------------------------------------------------
+# Debug Console
+# ------------------------------------------------------------------
+
+def start_shell(server):
+    print("Test mode: Interactive shell. Type 'exit' to quit.")
+    while True:
+        try:
+            command = input(">>> ")
+            command = command.strip().lower()
+            if command == 'exit':
+                break
+            elif command == 'dump':
+                current_info = server.get_all_data()
+                print("Current Server Info:")
+                print(json.dumps(current_info, indent=2))
+        except EOFError:
+            break
+        except KeyboardInterrupt:
+            break
+    print("Exiting test shell.")
+
+# ------------------------------------------------------------------
+# Web Interface
+# ------------------------------------------------------------------
+
+def start_interface(server):
+    logfile = server.get_log_location()
+    ihost, iport = server.get_interface()
+    interface = Interface(server, logfile=logfile)
+    interface.run(host=ihost, port=iport)
+
+# ------------------------------------------------------------------
+# Main Function
+# ------------------------------------------------------------------
+
+def main():
+    parser = argparse.ArgumentParser(description="Start Secure TCP Server")
+    parser.add_argument('--config', default='/opt/mon-server/data/config/server.conf', help='Path to config file (default: server.conf)')
+    parser.add_argument('--host', help='Host IP to listen on (ip:port)')
+    parser.add_argument('--interface', help='Interface Host IP to listen on (ip:port)')
+    parser.add_argument('--certfile', help='Path to server certificate file')
+    parser.add_argument('--keyfile', help='Path to server private key file')
+    parser.add_argument('--logfile', help='Path to log file')
+    parser.add_argument('--test', action='store_true', help='Run in test mode (interactive shell)')
+    args = parser.parse_args()
+
+    try:
+        server = start_server(
+            config=args.config,
+            host=args.host,
+            interface=args.interface,
+            certfile=args.certfile,
+            keyfile=args.keyfile,
+            logfile=args.logfile
+        )
+        if args.test:
+            threading.Thread(target=start_shell, args=(server,)).start()
+            start_shell(server)
+        else:
+            start_interface(server)
+    except KeyboardInterrupt:
+        server.stop()
+        sys.exit(0)
+
+if __name__ == "__main__":
+    main()

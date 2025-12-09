@@ -1,0 +1,26 @@
+﻿---
+# Install Apache, PHP, and Mutillidae
+- name: Install Apache, PHP, and Git
+  apt:
+    name:
+      - apache2
+      - php
+      - libapache2-mod-php
+      - git
+    state: present
+    update_cache: yes
+
+- name: Clone Mutillidae
+  git:
+    repo: "https://github.com/webpwnized/mutillidae.git"
+    dest: "/var/www/html/mutillidae"
+    version: "main"
+    force: yes
+
+- name: Set Mutillidae permissions
+  file:
+    path: "/var/www/html/mutillidae"
+    owner: "www-data"
+    group: "www-data"
+    mode: "0755"
+    recurse: yes

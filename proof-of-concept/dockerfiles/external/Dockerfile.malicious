@@ -1,0 +1,50 @@
+FROM kalilinux/kali-rolling
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=Etc/UTC
+ARG PUBLIC_KEY
+
+# Install dependencies for adding repositories, curl, Zsh, and SSH server
+RUN apt-get update && apt-get install -y \
+    curl \
+    gnupg \
+    lsb-release \
+    software-properties-common \
+    zsh \
+    git \
+    sudo \
+    vim \
+    openssh-server \
+    tzdata \
+    net-tools \
+    whois \
+    nmap \                
+    sqlmap \              
+    metasploit-framework \ 
+    nikto \               
+    gobuster \            
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Clone Oh My Zsh
+RUN git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh \
+    && cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
+
+# Install Zoxide
+RUN curl -sSfL https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | sh
+
+# Setup SSH
+RUN mkdir -p /var/run/sshd && \
+    echo 'root:root' | chpasswd 
+
+# Copy the public key into the container
+RUN mkdir -p /root/.ssh && \
+    echo "${PUBLIC_KEY}" > /root/.ssh/authorized_keys && \
+    chmod 700 /root/.ssh && \
+    chmod 600 /root/.ssh/authorized_keys
+
+# Expose SSH port
+EXPOSE 22
+
+# Start SSH service and set the default shell to Zsh
+CMD ["/usr/sbin/sshd", "-D"]

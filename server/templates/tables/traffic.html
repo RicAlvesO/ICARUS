@@ -1,0 +1,45 @@
+{% extends "utils/base.html" %}
+
+{% block title %}Network Traffic{% endblock %}
+
+{% block content %}
+<h2>Network Traffic</h2>
+
+<div class="table-responsive">
+  <table id="relationshipTable" class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Type</th>
+        <th>From (source_ref)</th>
+        <th>To (target_ref)</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for rel in data %}
+      <tr>
+        <td>{{ rel.id }}</td>
+        <td>{{ rel.type }}</td>
+        <td>{{ rel.src_ref }}</td>
+        <td>{{ rel.dst_ref }}</td>
+        <td>
+          <a href="/data/traffic/{{ rel.id }}" class="btn btn-sm btn-primary">View</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#relationshipTable').DataTable();
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+﻿---
+- name: Copy Server folder to the server
+  copy:
+    src: ../../../../../server/
+    dest: /opt/mon-server/ 
+
+- name: Copy Test data  
+  copy:
+    src: ../../../../data/server/
+    dest: /opt/mon-server/data/
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Create log folder
+  file:
+    path: /var/log/mon-server
+    state: directory
+    mode: '0644'  
+
+- name: Give exec permissions
+  file:
+    path: /opt/mon-server/mon-server
+    mode: '0755' 
+
+- name: Install Python dependencies
+  shell: /usr/bin/pip3 install -r /opt/mon-server/requirements
+
+- name: Start the server
+  shell: |
+    cd /opt/mon-server
+    ./mon-server >> /var/log/mon-server/web-server.log 2>&1 &
+  async: 1
+  poll: 0

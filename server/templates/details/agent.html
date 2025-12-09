@@ -1,0 +1,148 @@
+{% extends "utils/base.html" %}
+{% block title %}Agent Details{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Agent Details</h2>
+<table class="table table-bordered">
+  {% for key, value in agent.items() %}
+    <tr>
+      <th>{{ key }}</th>
+      <td>{{ value }}</td>
+    </tr>
+  {% endfor %}
+</table>
+<div id="graph" style="height: 800px; border: 1px solid #ccc;"></div>
+<link href="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/vis-network@9.1.2/dist/vis-network.min.js"></script>
+<script>
+(function() {
+  function labelFor(obj) {
+    if (obj.type === 'process') {
+      const pid = obj.pid !== undefined ? `pid=${obj.pid}` : '';
+      const cmd = (obj.command_line || obj.name || obj.cwd || '').toString().slice(0, 48);
+      return `process ${pid}\n${cmd}`.trim();
+    }
+    if (obj.type === 'ipv4-addr' && obj.value) return obj.value;
+    return obj.id || obj.type;
+  }
+
+  function titleFor(obj) {
+    try {
+      return `<pre>${JSON.stringify(obj, null, 2)}</pre>`;
+    } catch(e) {
+      return obj.type || 'object';
+    }
+  }
+
+  const typeGroups = {
+    'ipv4-addr': { color: { background: '#D2E5FF', border: '#4B77BE' }, shape: 'ellipse' },
+    'process': { color: { background: '#D5F5E3', border: '#1E8449' }, shape: 'box' },
+    'default': { color: { background: '#ECECEC', border: '#666' }, shape: 'box' }
+  };
+
+  function groupFor(obj) {
+    return typeGroups[obj.type] || typeGroups['default'];
+  }
+
+  function buildGraphFromBundle(bundle) {
+    const nodes = [];
+    const edges = [];
+    const seen = new Set();
+
+    // Add all nodes
+    for (const node of bundle.nodes || []) {
+      const obj = node.object;
+      if (!obj || !obj.id || seen.has(obj.id)) continue;
+      seen.add(obj.id);
+      const grp = groupFor(obj);
+      nodes.push({
+        id: obj.id,
+        label: labelFor(obj),
+        title: titleFor(obj),
+        shape: grp.shape,
+        color: grp.color,
+        font: { multi: true, face: 'Arial' }
+      });
+    }
+
+    // Add all edges
+    for (const edge of bundle.edges || []) {
+      if (edge.type === "relationship") {
+        edges.push({
+          from: edge.source,
+          to: edge.target,
+          arrows: 'to',
+          label: edge.relation.relationship_type || 'relationship',
+          font: { align: 'middle' }
+        });
+      } else if (edge.type === "network-traffic") {
+        const proto = Array.isArray(edge.relation.protocols) ? edge.relation.protocols.join(',') : (edge.relation.protocols || 'NET');
+        const ports = [edge.relation.src_port, edge.relation.dst_port].filter(p => p !== undefined).join('→');
+        const lbl = ports ? `${proto} ${ports}` : proto;
+        edges.push({
+          from: edge.source,
+          to: edge.target,
+          arrows: 'to',
+          label: lbl,
+          font: { align: 'middle' }
+        });
+      }
+    }
+
+    return { nodes, edges };
+  }
+
+  function renderGraph(nodes, edges) {
+    const container = document.getElementById('graph');
+    const data = {
+      nodes: new vis.DataSet(nodes),
+      edges: new vis.DataSet(edges)
+    };
+    const options = {
+      layout: { improvedLayout: false },
+      physics: {
+        enabled: true,   // start enabled
+        solver: "repulsion",
+        repulsion: { nodeDistance: 120, centralGravity: 0.1, springLength: 200 }
+      },
+      nodes: { margin: 10, widthConstraint: { maximum: 280 }, font: { size: 14 } },
+      edges: { 
+        arrows: { to: { enabled: true, scaleFactor: 1.5 } }, // bigger arrows
+        smooth: { enabled: false }, 
+        font: { size: 12, align: 'middle' }
+      },
+      interaction: { 
+        hover: true, 
+        multiselect: true, 
+        navigationButtons: true, 
+        keyboard: true, 
+        dragNodes: true, 
+        dragView: true, 
+        zoomView: true 
+      }
+    };
+  
+    const network = new vis.Network(container, data, options);
+  
+    // 🟢 disable physics after it settles
+    network.once("stabilizationIterationsDone", function () {
+      network.setOptions({ physics: false });
+    });
+  
+    network.on("click", function (params) {
+      if (params.nodes.length > 0) {
+        const nodeId = params.nodes[0];
+        window.location.href = `/data/observables/${encodeURIComponent(nodeId)}`;
+      }
+    });
+  }
+
+
+  // Load bundle data from Jinja2 context
+  const bundle = {{ bundle | tojson }};
+  const { nodes, edges } = buildGraphFromBundle(bundle);
+  renderGraph(nodes, edges);
+})();
+</script>
+
+{% endblock %}

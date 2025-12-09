@@ -1,0 +1,40 @@
+{% extends "utils/base.html" %}
+
+{% block title %}Agents Table{% endblock %}
+
+{% block content %}
+<h2>Agents</h2>
+
+<div class="table-responsive">
+  <table id="dataTable" class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>Agent</th>
+        <th>Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in data %}
+      <tr>
+        <td>{{ item.name }}</td>
+        <td><a href="agents/{{ item.obj_id }}" class="btn btn-sm btn-primary">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#dataTable').DataTable({
+      responsive: true,
+      order: [[0, 'asc']]
+    });
+  });
+</script>
+{% endblock %}
